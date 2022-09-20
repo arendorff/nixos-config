@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+	<home-manager/nixos>
     ];
 
   # use latest kernel 
@@ -115,37 +116,7 @@ services.jellyfin.enable = true;
     isNormalUser = true;
     description = "mo";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-	firefox-wayland
-	vim
-	neovim
-	tldr
-	git
-	wget
-	curl
-	fzf
-	tilix	
-	jellyfin-media-player
-	foliate
-	bottles
-	calibre
-	signal-desktop
-	qbittorrent
-	ranger 
-	syncthing
-	#openssh
-	fractal 
-
-	gnome.gnome-tweaks
-	gnome.gnome-boxes
-	gnome.geary
-	#gnome.gnome-extensions
-
-	jellyfin-media-player
-	signal-desktop
-	mullvad-vpn
-	
-    ];
+    # packages = with pkgs; [ ];
   };
 
 
@@ -168,9 +139,49 @@ services.flatpak.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+
+	vim
+	neovim
+	tldr
+	git
+	wget
+	curl
+	fzf
+	ranger 
+
+	firefox-wayland
+	tilix	
+	jellyfin-media-player
+	foliate
+	bottles
+	calibre
+	signal-desktop
+	qbittorrent
+	syncthing
+	fractal 
+	jellyfin-media-player
+	signal-desktop
+	mullvad-vpn
+
+        gnomeExtensions.appindicator
+	gnome.gnome-tweaks
+	gnome.gnome-boxes
+	gnome.geary
+	#gnome.gnome-extensions
+
   ];
+
+
+  # syncthing 
+services = {
+    syncthing = {
+        enable = true;
+        user = "mo";
+        dataDir = "/home/mo/Documents";    # Default folder for new synced folders
+        configDir = "/home/mo/Documents/.config/syncthing";   # Folder for Syncthing's settings and keys
+    };
+};
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -186,8 +197,8 @@ services.flatpak.enable = true;
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-   networking.firewall.allowedTCPPorts = [80 443 20 69];
-   networking.firewall.allowedUDPPorts = [80 443 20 69];
+  # networking.firewall.allowedTCPPorts = [80 443 20 69];
+  # networking.firewall.allowedUDPPorts = [80 443 20 69];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -198,5 +209,14 @@ services.flatpak.enable = true;
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.05"; # Did you read the comment?
+
+
+home-manager.users.mo = { pkgs, ... }: {
+	imports = [ ./dconf.nix ]; 
+	home.packages = [ pkgs.htop ];
+	home.stateVersion = "22.05"; 
+};
+
+
 
 }
